@@ -2,8 +2,8 @@ import requests
 import json
 
 from settings import (
-    DEV_EVENT_ENDPOINT,
-    DEV_ADD_REGISTRATION_ENDPOINT
+    PROD_EVENT_ENDPOINT,
+    PROD_ADD_REGISTRATION_ENDPOINT
 )
 
 
@@ -33,7 +33,7 @@ def add_registration(token: str, user_id: str, event_id: str) -> None:
         "user": user_id
     })
 
-    url = f"{DEV_EVENT_ENDPOINT}{event_id}{DEV_ADD_REGISTRATION_ENDPOINT}"
+    url = f"{PROD_EVENT_ENDPOINT}{event_id}{PROD_ADD_REGISTRATION_ENDPOINT}"
 
     response = requests.post(
         url=url,
