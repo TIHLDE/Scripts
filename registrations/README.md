@@ -1,4 +1,4 @@
-# Påmelding av brukere for arrangmenter
+# Påmelding av brukere for arrangementer
 
 Her vil du finne en samling av script som påvirker påmeldinger for et arrangement.
 
