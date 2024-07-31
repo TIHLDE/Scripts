@@ -6,6 +6,9 @@ start:
 list:
 	python list.py
 
+describe:
+	python describe.py $(args)
+
 add:
 	pip freeze > requirements.txt
 
