@@ -41,3 +41,17 @@ class InvalidFileFormat(ScriptError):
     
     def __init__(self, message="Denne filtypen er ikke støttet."):
         super().__init__(message)
+
+
+class FileNotFound(ScriptError):
+    """Exception raised for when a file is not found."""
+    
+    def __init__(self, message="Kunne ikke finne filen."):
+        super().__init__(message)
+
+
+class DirectoryNotFound(ScriptError):
+    """Exception raised for when a directory is not found."""
+    
+    def __init__(self, message="Kunne ikke finne mappen."):
+        super().__init__(message)

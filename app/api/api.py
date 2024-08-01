@@ -4,7 +4,12 @@ from app.enums import APIMethod
 from app.exceptions import InvalidAPIResponse
 
 
-def fetch(url: str, headers: dict, method: str) -> dict:
+def fetch(
+    url: str,
+    headers: dict,
+    method: str,
+    data: dict | None = None
+) -> dict:
     """
     Make a request to the API.
     """
@@ -16,7 +21,8 @@ def fetch(url: str, headers: dict, method: str) -> dict:
     elif method == APIMethod.POST.value:
         response = requests.post(
             url=url,
-            headers=headers
+            headers=headers,
+            data=data
         )
 
     if response.status_code not in [200, 201, 204]:
