@@ -19,10 +19,16 @@ def handle_function_call(token: str):
 
     match function:
         case FunctionName.ALLOW_PHOTO_BY_EVENT.value:
-            from app.events import allows_photo_by_event
+            from app.scripts.events import allows_photo_by_event
             allows_photo_by_event(token)
         case FunctionName.ALLOW_PHOTO_BY_DEFAULT.value:
-            from app.events import allows_photo
+            from app.scripts.events import allows_photo
             allows_photo(token)
+        case FunctionName.CREATE_BINGO.value:
+            from app.scripts.bingo import create_bingo_sheets
+            create_bingo_sheets()
+        case FunctionName.ADD_REGISTRATIONS.value:
+            from app.scripts.events import bulk_add
+            bulk_add(token)
         case _:
             raise InvalidFunction()

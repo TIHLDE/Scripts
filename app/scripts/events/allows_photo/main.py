@@ -4,13 +4,14 @@ from app.api import (
 )
 from app.utils.registrations import parse_registrations
 from app.utils.users import parse_users
+from app.utils.events import get_event_id
 
 
 def allows_photo_by_event(token: str):
     """
     Download a list of registrations with info about allowance of being taken photo of for a specific event.
     """
-    event_id = input("Oppgi id for et arrangement: ")
+    event_id = get_event_id()
 
     page = 1
 

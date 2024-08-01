@@ -1,5 +1,6 @@
 from app.api.registrations import (
-    get_registrations_that_allow_photo
+    get_registrations_that_allow_photo,
+    add_registration
 )
 
 from app.api.users import (

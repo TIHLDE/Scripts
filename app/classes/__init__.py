@@ -1,4 +1,5 @@
 from app.classes.user import (
     EventRegistrationUser,
-    User
+    User,
+    SimpleCSVUser
 )

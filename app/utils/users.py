@@ -1,4 +1,7 @@
-from app.classes import User
+from app.classes import (
+    User,
+    SimpleCSVUser
+)
 
 
 def parse_users(users: list) -> list[User]:
@@ -16,3 +19,23 @@ def parse_users(users: list) -> list[User]:
         )
         for user in users
     ]
+
+
+def parse_csv_users(users: list) -> list[SimpleCSVUser]:
+    users: list[SimpleCSVUser] = []
+
+    for user in users:
+        if len(user) != 3:
+            print("Feil antall kolonner i CSV-filen. CSV-filen må inneholde tre kolonner: 'user_id', 'name', 'email'. Hopper over bruker.")
+            continue
+            
+        user_id, name, email = user
+        users.append(
+            SimpleCSVUser(
+                user_id,
+                name,
+                email
+            )
+        )
+    
+    return users

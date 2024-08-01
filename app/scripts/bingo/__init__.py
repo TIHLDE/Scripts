@@ -1,0 +1,1 @@
+from app.scripts.bingo.main import create_bingo_sheets
