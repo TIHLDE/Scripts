@@ -10,27 +10,28 @@ from app.exceptions import (
     FileNotFound,
     DirectoryNotFound
 )
+from app.config import config
 
+
+conf = config.bingo
 
 def get_number_of_sheets() -> int:
-    DEFAULT_NUMBER_OF_SHEETS = 10
-
-    number = input("Hvor mange bingobrett vil du generere? (Standard er 10): ")
+    number = input(f"Hvor mange bingobrett vil du generere? (Standard er {conf.number_of_sheets}): ")
 
     if not number:
-        return DEFAULT_NUMBER_OF_SHEETS
+        return conf.number_of_sheets
     
     try:
         return int(number)
     except ValueError:
-        return DEFAULT_NUMBER_OF_SHEETS
+        return conf.number_of_sheets
 
 
 def extract_sentences() -> list[str]:
-    path = "app/scripts/bingo/sentences.txt"
+    path = conf.sentences
 
     if not os.path.exists(path):
-        raise FileNotFound("Kunne ikke finne filen med setningene. En fil med navn 'sentences.txt' må ligge i mappen 'bingo'.")
+        raise FileNotFound(f"Kunne ikke finne filen med setningene. Du må følgende fil: '{path}'")
     
     with open(
         path,
@@ -42,25 +43,25 @@ def extract_sentences() -> list[str]:
 
 def generate_pdf(index: int, sentences: list[str]):
     unique_sentences = list(set(sentences)) 
-    directory = "app/scripts/bingo/pdfs"
+    directory = conf.pdfs_folder
 
     if not os.path.exists(directory):
-        raise DirectoryNotFound("Kunne ikke finne mappen 'pdfs'. Denne mappen må ligge i mappen 'bingo'.")
+        raise DirectoryNotFound(f"Kunne ikke finne mappen '{directory}'.")
 
     pdf_file = f"{directory}/bingo{index + 1}.pdf"
     c = canvas.Canvas(pdf_file, pagesize=letter)
 
-    c.setFont("Helvetica", 10)
+    c.setFont(conf.font, conf.font_size)
 
-    CELL_WIDTH = 120
-    CELL_HEIGHT = 120
-    X_START = 5
-    Y_START = 625
+    CELL_WIDTH = conf.cell_width
+    CELL_HEIGHT = conf.cell_height
+    X_START = conf.x_start
+    Y_START = conf.y_start
 
     random.shuffle(unique_sentences)
 
-    for row in range(5):
-        for col in range(5):
+    for row in range(conf.rows):
+        for col in range(conf.cols):
             sentence = unique_sentences.pop(0)
 
             x = X_START + col * CELL_WIDTH
@@ -68,7 +69,9 @@ def generate_pdf(index: int, sentences: list[str]):
 
             c.rect(x, y, CELL_WIDTH, CELL_HEIGHT)
 
-            max_chars = int(CELL_WIDTH / 6)
+            max_chars = int(
+                CELL_WIDTH / conf.max_chars_divider
+            )
 
             lines = []
             current_line = ""
@@ -81,28 +84,32 @@ def generate_pdf(index: int, sentences: list[str]):
             if current_line:
                 lines.append(current_line.strip())
 
-            line_height = 20
+            line_height = conf.line_height
 
             for i, line in enumerate(lines):
-                c.drawString(x + 10, y + CELL_HEIGHT - (i * line_height) - 20, line)
+                c.drawString(
+                    x + conf.x_offset,
+                    y + CELL_HEIGHT - (i * line_height) - conf.y_offset,
+                    line
+                )
 
     c.save()
 
 
 def merge_pdfs():
     merger = PdfMerger()
-    pdf_folder = "app/scripts/bingo/pdfs"
+    pdf_folder = conf.pdfs_folder
     for filename in os.listdir(pdf_folder):
         if filename.endswith(".pdf"):
             file_path = os.path.join(pdf_folder, filename)
             merger.append(file_path)
     
-    merger.write("downloads/bingo.pdf")
+    merger.write(f"{config.download_folder}/{conf.pdf_name}.pdf")
     merger.close()
 
 
 def clean_up():
-    pdf_folder = "app/scripts/bingo/pdfs"
+    pdf_folder = conf.pdfs_folder
     for filename in os.listdir(pdf_folder):
         file_path = os.path.join(pdf_folder, filename)
         os.remove(file_path)

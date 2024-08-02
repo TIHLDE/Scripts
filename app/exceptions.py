@@ -55,3 +55,10 @@ class DirectoryNotFound(ScriptError):
     
     def __init__(self, message="Kunne ikke finne mappen."):
         super().__init__(message)
+
+
+class ConfigKeyNotFound(ScriptError):
+    """Exception raised for when a key is not found in the config file."""
+    
+    def __init__(self, message):
+        super().__init__(message)

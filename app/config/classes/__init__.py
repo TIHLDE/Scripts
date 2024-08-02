@@ -1,0 +1,1 @@
+from app.config.classes.bingo import BingoConfig

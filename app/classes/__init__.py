@@ -3,3 +3,4 @@ from app.classes.user import (
     User,
     SimpleCSVUser
 )
+from app.config.config import Config
