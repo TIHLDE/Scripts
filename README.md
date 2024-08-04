@@ -49,7 +49,7 @@ make list
 make describe="your_selected_script"
 
 # Kjør et valgt program
-make args="your_selected_script"
+make start args="your_selected_script"
 ```
 
 Hvis du ikke har Make:
