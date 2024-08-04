@@ -6,3 +6,8 @@ from app.api.registrations import (
 from app.api.users import (
     get_users_with_not_allowed_photo
 )
+
+from app.api.files import (
+    upload_file,
+    delete_file
+)

@@ -5,12 +5,18 @@ from app.api import (
 from app.utils.registrations import parse_registrations
 from app.utils.users import parse_users
 from app.utils.events import get_event_id
+from app.utils.token import get_api_token
+from app.config import config
 
 
-def allows_photo_by_event(token: str):
+def allows_photo_by_event():
     """
     Download a list of registrations with info about allowance of being taken photo of for a specific event.
     """
+    token = get_api_token()
+
+    conf = config.allows_photo_by_event
+
     event_id = get_event_id()
 
     page = 1
@@ -42,7 +48,9 @@ def allows_photo_by_event(token: str):
 
     users.sort(key=lambda user: user.allow_photo)
 
-    file_name = f"downloads/event_{event_id}_registrations_allow_photo.txt"
+    with_event_id = f"event_{event_id}_" if conf.with_event_id else ""
+
+    file_name = f"{config.download_folder}/{with_event_id}{conf.file_name}.txt"
     with open(file_name, "w", encoding="utf-8") as f:
         for user in users:
             f.write(f"{user.user_id} - {user.first_name} {user.last_name} - {user.email} - Vil bli tatt bilde av: {user.allow_photo}\n")
@@ -50,10 +58,13 @@ def allows_photo_by_event(token: str):
     print(f"Registreringer lagret i {file_name}")
 
 
-def allows_photo(token: str):
+def allows_photo():
     """
     Download a list of users that don't allow being taken photo of for all events by default.
     """
+    token = get_api_token()
+
+    conf = config.allows_photo
 
     page = 1
 
@@ -80,7 +91,7 @@ def allows_photo(token: str):
     
     users = parse_users(users)
 
-    file_name = f"downloads/all_users_not_allow_photo.txt"
+    file_name = f"{config.download_folder}/{conf.file_name}.txt"
     with open(file_name, "w", encoding="utf-8") as f:
         for user in users:
             f.write(f"{user.user_id} - {user.first_name} {user.last_name} - {user.email} - Vil bli tatt bilde av: False\n")

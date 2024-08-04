@@ -1,4 +1,3 @@
-from app.utils.token import get_api_token
 from app.exceptions import ScriptError
 from app.handler import handle_function_call
 from app.utils.setup import setup
@@ -7,8 +6,7 @@ from app.utils.setup import setup
 def main():
     try:
         setup()
-        token = get_api_token()
-        handle_function_call(token)
+        handle_function_call()
     except Exception as e:
         if isinstance(e, ScriptError):
             print(f"\n{e}\n")

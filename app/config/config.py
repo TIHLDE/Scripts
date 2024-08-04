@@ -1,26 +1,41 @@
 import os
+import json
 
 from app.exceptions import ConfigKeyNotFound
 from app.config.enums import (
-    BingoConfigEnum
+    ConfigEnum,
+    BingoConfigEnum,
+    AllowsPhotoByEventEnum,
+    AllowsPhotoEnum,
+    UploadFileEnum
 )
 from app.config.classes import (
-    BingoConfig
+    BingoConfig,
+    AllowsPhotoByEventConfig,
+    AllowsPhotoConfig,
+    UploadFileConfig
 )
 
 class Config:
 
     CONFIG_PATH = "config.json"
-
-    def __init__(self):
-        self.config: dict = self.load_config()
+    
+    config: dict = {}
 
     def load_config(self) -> dict:
         if os.path.exists(self.CONFIG_PATH):
-            with open(self.CONFIG_PATH, "r") as f:
-                return f.read()
-        
-        return self.default_config()
+            self.config = self.read_config()
+        else:
+            self.config = self.default_config()
+        self.write_config()
+    
+    def read_config(self) -> dict:
+        with open(self.CONFIG_PATH, "r") as f:
+            return json.load(f)
+    
+    def write_config(self):
+        with open(self.CONFIG_PATH, "w") as f:
+            json.dump(self.config, f, indent=4)
     
     def default_config(self) -> dict:
         return {
@@ -58,6 +73,9 @@ class Config:
                     "bulk_add": {
                         "users_csv": "app/scripts/events/bulk_add/users.csv"
                     }
+                },
+                "upload_file": {
+                    "upload_folder": "upload",
                 }
             }
         }
@@ -65,12 +83,11 @@ class Config:
     def validate(
         self,
         values: dict,
-        keys: list[str],
-        title: str
+        enum: ConfigEnum
     ):
         for key in values:
-            if key not in keys:
-                raise ConfigKeyNotFound(f"Nøkkel '{key}' ble ikke funnet i konfigurasjonsfilen til '{title}'.")
+            if key not in enum.all():
+                raise ConfigKeyNotFound(f"Nøkkel '{key}' ble ikke funnet i konfigurasjonsfilen til '{enum.name}'.")
 
     def get_config(self) -> dict:
         return self.config
@@ -79,10 +96,11 @@ class Config:
         value = self.config.get(key, None)
         if value is None:
             raise ConfigKeyNotFound(f"Nøkkel '{key}' ble ikke funnet i konfigurasjonsfilen.")
+        return value
     
     @property
     def download_folder(self) -> str:
-        return self.get("downloads_folder")
+        return self.get("download_folder")
 
     def prompt(self) -> bool:
         return self.get("prompt") == "true"
@@ -90,8 +108,38 @@ class Config:
     @property
     def bingo(self) -> BingoConfig:
         values = self.get("scripts").get("bingo")
-        self.validate(values, BingoConfigEnum.all(), "bingo")
-        return values
+        self.validate(values, BingoConfigEnum)
+        return BingoConfig(**values)
+    
+    @property
+    def __events(self) -> dict:
+        return self.get("scripts").get("events")
+    
+    @property
+    def __allows_photo(self) -> dict:
+        return self.__events.get("allows_photo")
+
+    @property
+    def allows_photo_by_event(self) -> AllowsPhotoByEventConfig:
+        values: dict = self.__allows_photo.get("by_event")
+        self.validate(values, AllowsPhotoByEventEnum)
+        with_event_id = values.get("with_event_id") == "true"
+        return AllowsPhotoByEventConfig(
+            with_event_id=with_event_id,
+            file_name=values.get("file_name")
+        )
+
+    @property
+    def allows_photo(self) -> AllowsPhotoConfig:
+        values: dict = self.__allows_photo.get("all")
+        self.validate(values, AllowsPhotoEnum)
+        return AllowsPhotoConfig(**values)
+
+    @property
+    def upload_file(self) -> UploadFileConfig:
+        values = self.get("scripts").get("upload_file")
+        self.validate(values, UploadFileEnum)
+        return UploadFileConfig(**values)
 
 
 config = Config()
