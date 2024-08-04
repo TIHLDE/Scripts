@@ -2,13 +2,16 @@ from app.utils.events import get_event_id
 from app.utils.csv import load_csv
 from app.api import add_registration
 from app.utils.users import parse_csv_users
+from app.utils.token import get_api_token
 from app.exceptions import ScriptError
 
 
-def bulk_add(token: str):
+def bulk_add():
     """
     Bulk add participants to event.
     """
+    token = get_api_token()
+
     event_id = get_event_id()
 
     CSV_PATH = "app/scripts/events/bulk_add/users.csv"

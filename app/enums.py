@@ -13,6 +13,8 @@ class FunctionName(Enum):
     ALLOW_PHOTO_BY_DEFAULT = "get_users_with_not_allowed_photo_by_default"
     CREATE_BINGO = "create_bingo_sheets"
     ADD_REGISTRATIONS = "bulk_add_registrations_to_event"
+    UPLOAD_FILE = "upload_file"
+    DELETE_FILE = "delete_file"
 
     @classmethod
     def all(cls) -> list[str]:

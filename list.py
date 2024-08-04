@@ -7,7 +7,7 @@ def list_functions():
     """
     functions = FunctionName.all()
     functions = "\n- ".join(functions)
-    print(f"Mulige funksjoner du kan bruke:\n\n- {functions}")
+    print(f"Mulige funksjoner du kan bruke:\n\n- {functions}\n")
 
 
 if __name__ == "__main__":

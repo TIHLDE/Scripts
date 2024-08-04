@@ -1,5 +1,7 @@
 import requests
 
+from io import BufferedReader
+
 from app.enums import APIMethod
 from app.exceptions import InvalidAPIResponse
 
@@ -8,7 +10,8 @@ def fetch(
     url: str,
     headers: dict,
     method: str,
-    data: dict | None = None
+    data: dict | None = None,
+    files: dict[str, BufferedReader] | None = None
 ) -> dict:
     """
     Make a request to the API.
@@ -22,12 +25,22 @@ def fetch(
         response = requests.post(
             url=url,
             headers=headers,
-            data=data
+            data=data,
+            files=files
         )
+    elif method == APIMethod.DELETE.value:
+        response = requests.delete(
+            url=url,
+            headers=headers
+        )
+    
+    try:
+        response_json = response.json()
+    except ValueError:
+        response_json = None
 
     if response.status_code not in [200, 201, 204]:
-        json = response.json()
-        error_message = json["detail"] if "detail" in json else "Unknown error"
+        error_message = response_json["detail"] if response_json and "detail" in response_json else response.text
         raise InvalidAPIResponse(error_message)
 
-    return response.json()
+    return response_json if response_json is not None else {}
