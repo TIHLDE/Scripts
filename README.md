@@ -46,7 +46,7 @@ For å kjøre programmer kan du bruke følgende kommandoer:
 make list
 
 # Hent ut en beskrivelse av et program
-make describe="your_selected_script"
+make describe args="your_selected_script"
 
 # Kjør et valgt program
 make start args="your_selected_script"
